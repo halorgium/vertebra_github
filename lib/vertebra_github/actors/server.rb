@@ -2,9 +2,11 @@ require 'rack'
 require 'mongrel'
 require 'json'
 
-module VertebraGithubHttp
+module VertebraGithub
   module Actors
     class Server < Vertebra::Actor
+      include Vertebra::Utils
+
       def initialize(*args)
         super
         Thread.new {
@@ -23,9 +25,11 @@ module VertebraGithubHttp
         data = JSON.parse(request.POST['payload'])
         pp data
 
+        owner = data['repository']['owner']['name']
         repository = data['repository']['name']
         data['commits'].each do |commit|
-          @agent.request("/code/commit", :repository => repository, :commit => commit)
+          args = {:repository => resource("/repository/github/#{owner}/#{repository}"), :commit => commit}
+          @agent.request("/code/commit", :single, args)
         end
         [200, {"Content-Type" => "text/plain"}, "OK"]
       rescue Exception => e

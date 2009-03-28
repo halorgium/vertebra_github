@@ -4,8 +4,7 @@ debug: true
 jabber_debug: true
 log_path: :error
 pid_path: tmp/github.pid
-actor_path: actors
 herault_jid: herault@localhost/herault
 actor_path: lib
 actors:
- - vertebra_github_http/actors/server
+ - vertebra_github/actors/server
